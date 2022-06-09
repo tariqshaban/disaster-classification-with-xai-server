@@ -1,0 +1,1 @@
+web: gunicorn --workers=1 --max-requests=1 --timeout=600 --worker-class=uvicorn.workers.UvicornWorker main:app
