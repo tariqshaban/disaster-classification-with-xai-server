@@ -21,6 +21,8 @@ The expected returned values are:
 
 > The weights of the model has been imported, rather than the whole architecture and configuration.
 
+> Due to hosting limitations, Lime `num_samples` attribute has been reduced from 1000 to 10 only.
+
 Such hyperparameters returned the best results.
 
 Getting Started

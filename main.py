@@ -41,7 +41,7 @@ def explain_image_lime(img, model):
     explanation = explainer.explain_instance(np.asanyarray(preprocessed_image).astype('double'), model.predict,
                                              top_labels=5, hide_color=0, num_samples=10)
 
-    temp, mask = explanation.get_image_and_mask(explanation.top_labels[0], positive_only=False, num_features=1000,
+    temp, mask = explanation.get_image_and_mask(explanation.top_labels[0], positive_only=False, num_features=10,
                                                 hide_rest=False)
 
     return mark_boundaries(img, mask)
