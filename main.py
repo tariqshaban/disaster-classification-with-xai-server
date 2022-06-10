@@ -65,9 +65,10 @@ def explain_image_grad_cam(img, model):
     Image.fromarray(img).save(image_path)
 
     img = preprocess_image(image_path, target_size=(224, 224))
+    preprocessed_image = tf.keras.applications.resnet50.preprocess_input(img)
 
     heatmap = grad_cam(
-        model, img,
+        model, preprocessed_image,
         layer_name=model.layers[1].name,
     )
 
@@ -84,9 +85,10 @@ def explain_image_grad_cam_plus_plus(img, model):
     Image.fromarray(img).save(image_path)
 
     img = preprocess_image(image_path, target_size=(224, 224))
+    preprocessed_image = tf.keras.applications.resnet50.preprocess_input(img)
 
     heatmap = grad_cam_plus(
-        model, img,
+        model, preprocessed_image,
         layer_name=model.layers[1].name,
     )
 
@@ -104,7 +106,8 @@ def predict_image_class(img, model):
     ]
 
     img = np.expand_dims(img, axis=0)
-    tensor = tf.convert_to_tensor(img, dtype=tf.float32)
+    preprocessed_image = tf.keras.applications.resnet50.preprocess_input(img)
+    tensor = tf.convert_to_tensor(preprocessed_image, dtype=tf.float32)
     return classes[np.argmax(model.predict(tensor))]
 
 
@@ -126,8 +129,7 @@ async def startup_event():
 
     gc.collect()
 
-
-@app.get('/classify_image')
+@app.post('/classify_image')
 async def classify_image(file: UploadFile = File(...)):
     base_model = ResNet50(weights='imagenet', include_top=False, input_shape=(224, 224, 3))
     base_model.trainable = False
@@ -148,6 +150,7 @@ async def classify_image(file: UploadFile = File(...)):
     gc.collect()
 
     img = Image.open(file.file)
+    img = img.convert('RGB')
     img = img.resize((224, 224))
     img = np.expand_dims(img, axis=0)
     img = np.vstack([img])[0]
